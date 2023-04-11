@@ -26,12 +26,19 @@ function ProfilePage() {
   const [orgEvents, setOrgEvents] = useState(ROWS.filter(el => el.orgId === 1));
 
   const [open, setOpen] = useState(false);
+  const [openModalCreate, setOpenCreateModal] = useState(false);
 
   const [eventToEdit, setEventToEdit] = useState(null);
-
+  const [newEvent, setNewEvent] = useState({});
+ 
   const [valueDate, setValueDate] = useState([
     dayjs('2022-04-17'),
     dayjs('2022-04-21'),
+  ]);
+
+  const [valueDateNewEvent, setValueDateNewEvent] = useState([
+    dayjs(Date.now()),
+    dayjs(Date.now()),
   ]);
 
 
@@ -85,6 +92,29 @@ function ProfilePage() {
     setEventToEdit({ ...eventToEdit, type: e.target.value });
   }
 
+  const openCreateModal = () => {
+    setOpenCreateModal(true);
+  }
+  const handleCreateModal = () => {
+    setOpenCreateModal(false);
+  }
+
+  const changeCreateCat = (e) => {
+    setNewEvent({...newEvent, cat: e.target.value});
+  }
+
+  const changeCreateDescription = (e) => {
+    setNewEvent({...newEvent, description: e.target.value})
+  }
+
+  const changeCreateType = (e) => {
+    setNewEvent({...newEvent, type: e.target.value})
+  }
+
+  const handleDateNewEvent = (e) => {
+    console.log(e)
+  }
+
   return (
     <Box ml={2} mt={2}>
       <Typography variant="h4" gutterBottom>
@@ -130,11 +160,12 @@ function ProfilePage() {
           })}
         </List>
       }
+      <Button variant="contained" onClick={openCreateModal}>Создать мероприятие</Button>
       <TransitionsModal open={open} handleClose={handleCloseEdit}>
         <Typography variant="h6" gutterBottom align='center'>
           Редактирование мероприятия
         </Typography>
-        <div>
+        <form>
           <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-simple-select-standard-label">Категория</InputLabel>
             <Select
@@ -184,10 +215,68 @@ function ProfilePage() {
             </DemoContainer>
           </LocalizationProvider>
           <Stack spacing={2} direction="row" mt={2}>
-            <Button variant="contained" color="success">Применить</Button>
+            <Button variant="contained" color="success" type="submit">Применить</Button>
             <Button variant="contained" color='error'>Отменить</Button>
           </Stack>
-        </div>
+        </form>
+      </TransitionsModal>
+
+      <TransitionsModal open={openModalCreate} handleClose={handleCreateModal}>
+        <Typography variant="h6" gutterBottom align='center'>
+          Новое мероприятие
+        </Typography>
+        <form action="">
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="createSelect">Категория</InputLabel>
+            <Select
+              labelId="createSelect"
+              value={newEvent?.cat || ''}
+              onChange={changeCreateCat}
+              label="Категория"
+            >
+              {categories.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <div>
+            <TextField
+              fullWidth
+              label="Название"
+              multiline
+              rows={4}
+              defaultValue={newEvent?.description || ''}
+              variant="filled"
+              onChange={changeCreateDescription}
+            />
+          </div>
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="changeTypeCreate">Тип</InputLabel>
+            <Select
+              labelId="changeTypeCreate"
+              value={newEvent?.type || ''}
+              onChange={changeCreateType}
+              label="Тип"
+            >
+              <MenuItem value={'закрытая'}>Открытое</MenuItem>
+              <MenuItem value={'открытая'}>Закрытое</MenuItem>
+            </Select>
+          </FormControl>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DateRangePicker']}>
+              <DemoItem label="Выберите даты" component="DateRangePicker">
+                <DateRangePicker
+                  format={'DD/MM/YYYY'}
+                  localeText={{ start: 'Начало', end: 'Конец' }}
+                  value={valueDateNewEvent}
+                  onChange={handleDateNewEvent}
+                />
+              </DemoItem>
+            </DemoContainer>
+          </LocalizationProvider>
+          <Stack spacing={2} direction="row" mt={2}>
+            <Button variant="contained" color="success" type="submit">Создать</Button>
+            <Button variant="contained" color='error'>Отменить</Button>
+          </Stack>
+        </form>
       </TransitionsModal>
     </Box>
   )

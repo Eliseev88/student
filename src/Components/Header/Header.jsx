@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -102,7 +102,9 @@ export default function ButtonAppBar() {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Агрегатор мероприятий универстита
+                        <NavLink to={'/'} className={cl.link}>
+                            Агрегатор мероприятий универстита
+                        </NavLink>
                     </Typography>
                     <Search className={cl.search}>
                         <SearchIconWrapper>
