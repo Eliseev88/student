@@ -4,6 +4,7 @@ import filterFormReducer from './slices/filterFormSlice';
 import searchReducer from './slices/searchSlice';
 import authReducer from './slices/authSlice';
 
+// Подключаем реакт редакс
 export const store = configureStore({
   reducer: {
     filter: filterReducer,
