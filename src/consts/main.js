@@ -23,13 +23,13 @@ export const ROWS = [
 
 export const headCells = [
     {
-        id: 'cat',
+        id: 'category_id',
         numeric: false,
         disablePadding: false,
         label: 'Наименование',
     },
     {
-        id: 'description',
+        id: 'title',
         numeric: false,
         disablePadding: false,
         label: 'Краткое описание',

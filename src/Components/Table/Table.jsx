@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,13 +13,13 @@ import Switch from '@mui/material/Switch';
 import Rating from '@mui/material/Rating';
 import { EnhancedTableToolbar } from './TableToolbar';
 import cl from './Table.module.css';
-import { ROWS } from '../../consts/main';
 import { EnhancedTableHead } from './TableHead';
 import { stableSort, getComparator } from '../../utils/sortingTable';
 import { useNavigate } from "react-router-dom";
 import Filters from '../Filters/Filters';
 import TransitionsModal from '../Modal/Modal';
 import { filterTable } from '../../utils/filterTable';
+import { fetchEvents } from '../../store/slices/event/actionCreator';
 
 const DEFAULT_ORDER = 'desc';
 const DEFAULT_ORDER_BY = 'id';
@@ -34,7 +34,7 @@ export default function EnhancedTable() {
     const [visibleRows, setVisibleRows] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
     const [paddingHeight, setPaddingHeight] = useState(0);
-    const [rows, setRows] = useState(ROWS);
+    const [rows, setRows] = useState([]);
     // Modal
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -46,13 +46,24 @@ export default function EnhancedTable() {
     // Search
     const { data: search } = useSelector(state => state.search);
 
+    const dispatch = useDispatch();
+    const {events, isLoading, error} = useSelector(state => state.events);
+
+    useEffect(() =>  {
+      dispatch(fetchEvents())
+    }, [dispatch]);
+
+    useEffect(() => {
+        setRows(events)
+    }, [events]);
+
     useEffect(() => {
         if (!search) {
-            setRows(ROWS);
+            setRows(events);
             return;
         }
-        setRows(ROWS.filter(el => el.description.toLowerCase().includes(search.toLowerCase())));
-    }, [search]);
+        setRows(events.filter(el => el.title.toLowerCase().includes(search.toLowerCase())));
+    }, [search, events]);
 
     const navigate = useNavigate();
 
@@ -83,7 +94,7 @@ export default function EnhancedTable() {
             //         page * rowsPerPage,
             //         page * rowsPerPage + rowsPerPage,
             //     );
-    
+
             //     setVisibleRows(updatedRows);
             //     return;
             // }
@@ -94,13 +105,12 @@ export default function EnhancedTable() {
             //         page * rowsPerPage,
             //         page * rowsPerPage + rowsPerPage,
             //     );
-    
+
             //     setVisibleRows(updatedRows);
             //     return;
             // }
 
             const sortedRows = stableSort(rows, getComparator(toggledOrder, newOrderBy));
-            console.log(sortedRows)
             const updatedRows = sortedRows.slice(
                 page * rowsPerPage,
                 page * rowsPerPage + rowsPerPage,
@@ -166,12 +176,12 @@ export default function EnhancedTable() {
 
     useEffect(() => {
         if (filter) {
-            filterTable(filter, setRows, ROWS);
+            filterTable(filter, setRows, events);
         }
         if (!filter) {
-            setRows(ROWS);
+            setRows(events);
         }
-    }, [filter]);
+    }, [filter, events]);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -200,8 +210,8 @@ export default function EnhancedTable() {
                                             key={row.id}
                                             sx={{ cursor: 'pointer' }}
                                         >
-                                            <TableCell align="left">{row.cat}</TableCell>
-                                            <TableCell align="left">{row.description}</TableCell>
+                                            <TableCell align="left">{row.category?.title}</TableCell>
+                                            <TableCell align="left">{row.title}</TableCell>
                                             <TableCell align="left">{row.start}</TableCell>
                                             <TableCell align="left">{row.finish}</TableCell>
                                             <TableCell align="left">{row.type}</TableCell>

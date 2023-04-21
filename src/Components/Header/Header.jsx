@@ -15,8 +15,8 @@ import RegisterForm from '../RegisterForm/RegisterForm';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSearch } from '../../store/slices/searchSlice';
-import { setAuth } from '../../store/slices/authSlice';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { getUserByToken, logout } from '../../store/slices/auth/actionCreator';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -68,14 +68,16 @@ export default function ButtonAppBar() {
 
     const search = useSelector((state) => state.search);
     const dispatch = useDispatch();
+    const user = useSelector(state => state.auth.user);
 
     const { pathname } = useLocation();
 
-    if (localStorage.getItem('auth')) {
-        dispatch(setAuth(true));
-    }
-
-    const auth = useSelector(state => state.auth.data);
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            dispatch(getUserByToken(localStorage.getItem('token')));
+            localStorage.setItem('auth', true);
+        }
+    }, [dispatch]);
 
     useEffect(() => {
         if (pathname === '/login' || pathname === '/register') {
@@ -93,8 +95,9 @@ export default function ButtonAppBar() {
     }
 
     const handleExit = () => {
-        dispatch(setAuth(false));
+        localStorage.removeItem('token');
         localStorage.removeItem('auth');
+        dispatch(logout(user.token))
     }
 
     return (
@@ -117,13 +120,13 @@ export default function ButtonAppBar() {
                             onChange={handleSearchChange}
                         />
                     </Search>
-                    {auth
-                        ? <Link to='/profile' className={cl.link} title='Профиль'>Иван Иванов</Link>
+                    {user
+                        ? <Link to='/profile' className={cl.link} title='Профиль'>{user.user?.name}</Link>
                         : <Button color="inherit" onClick={handleOpen}>
                             Войти
                         </Button>
                     }
-                    {auth && <Button color="inherit" onClick={handleExit} title='Выйти'><ExitToAppIcon /></Button>}
+                    {user && <Button color="inherit" onClick={handleExit} title='Выйти'><ExitToAppIcon /></Button>}
                     <TransitionsModal open={open} handleClose={handleClose}>
                         {location === '/register' ? <RegisterForm handleClose={handleClose} /> : <LoginForm handleClose={handleClose} />}
                     </TransitionsModal>

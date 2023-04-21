@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -6,40 +6,40 @@ import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
 import cl from './LoginForm.module.css';
-import { useDispatch } from 'react-redux';
-import { setAuth } from '../../store/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Alert } from '@mui/material';
+import { login } from '../../store/slices/auth/actionCreator';
 
 function LoginForm({ handleClose }) {
-    const [login, setLogin] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [emptyField, setEmptyField] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const user = useSelector(state => state.auth.user);
+    const error = useSelector(state => state.auth.error);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!password && !login) {
+        if (!password && !email) {
             setEmptyField(true);
             return;
         }
-
-        if (rememberMe) {
-            localStorage.setItem('auth', true);
+        const obj = {
+            email,
+            password
         }
-        handleClose();
-        dispatch(setAuth(true));
-        navigate('/profile');
-
+        dispatch(login(obj));
     }
 
     const onChangeLogin = (e) => {
         if (emptyField) {
             setEmptyField(false);
         }
-        setLogin(e.target.value);
+        setEmail(e.target.value);
     }
 
     const onChangePassword = (e) => {
@@ -49,20 +49,33 @@ function LoginForm({ handleClose }) {
         setPassword(e.target.value);
     }
 
+    useEffect(() => {
+        if (user) {
+            if (rememberMe) {
+                localStorage.setItem('token', user.token);
+            }
+            localStorage.setItem('auth', true);
+            handleClose();
+            navigate('/profile');
+        }
+
+    }, [user, rememberMe, navigate, handleClose]);
+
     return (
         <form onSubmit={handleSubmit}>
             <Typography variant="h5" component="h2">
                 Авторизация
             </Typography>
             <div className={cl.box}>
+                {error && <Alert sx={{ width: '100%' }} severity="warning">Неверные почта или пароль</Alert>}
                 <Typography variant="overline" display="block" gutterBottom color='red'>
-                    {emptyField && 'Введите логин и пароль'}
+                    {emptyField && 'Введите почту и пароль'}
                 </Typography>
                 <TextField
-                    label="Введите логин"
+                    label="Введите почту"
                     variant="standard"
                     size='small'
-                    value={login}
+                    value={email}
                     required
                     onChange={onChangeLogin}
                 />

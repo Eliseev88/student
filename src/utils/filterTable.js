@@ -8,7 +8,7 @@ export function filterTable(filter, setRows, ROWS) {
         setRows(ROWS.filter(el => {
             const eventFinish = convertStringToDate(el.finish);
             return el.type === filter.type && 
-                el.cat === filter.cat && 
+                el.category.title === filter.cat && 
                 el.rate >= filter.rate &&  
                 date.getTime() <= eventFinish.getTime();
         }));
@@ -17,14 +17,14 @@ export function filterTable(filter, setRows, ROWS) {
     if (filter.cat && filter.rate) {
         setRows(ROWS.filter(el => {
             const eventFinish = convertStringToDate(el.finish);
-            return el.cat === filter.cat && el.rate >= filter.rate && date.getTime() <= eventFinish.getTime();
+            return el.category.title === filter.cat && el.rate >= filter.rate && date.getTime() <= eventFinish.getTime();
         }));
         return;
     }
     if (filter.cat && filter.type) {
         setRows(ROWS.filter(el => {
             const eventFinish = convertStringToDate(el.finish);
-            return el.cat === filter.cat && el.type === filter.type && date.getTime() <= eventFinish.getTime();
+            return el.category.title === filter.cat && el.type === filter.type && date.getTime() <= eventFinish.getTime();
         }));
         return;
     }
@@ -52,7 +52,7 @@ export function filterTable(filter, setRows, ROWS) {
     if (filter.cat) {
         setRows(ROWS.filter(el => {
             const eventFinish = convertStringToDate(el.finish);
-            return el.cat === filter.cat && date.getTime() <= eventFinish.getTime();
+            return el.category.title === filter.cat && date.getTime() <= eventFinish.getTime();
         }));
         return;
     }
@@ -66,7 +66,7 @@ export function filterTable(filter, setRows, ROWS) {
 }
 
 export function convertStringToDate(strDate) {
-    const parts = strDate.split('.');
+    const parts = strDate.split('-');
     const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
     return dateObj;
 }
