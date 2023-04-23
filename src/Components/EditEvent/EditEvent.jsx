@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import { convertStringToDate } from "../../utils/filterTable";
 import { editEvent } from "../../store/slices/event/actionCreator";
+import { fetchOrgEvents } from "../../store/slices/orgEvents/actionsCreator";
 
 const categories = ['Форум', 'Конференция', 'Олимпиада', 'Конкурс'];
 
@@ -22,6 +23,7 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
     const [eventEdit, setEventToEdit] = useState(eventToEdit);
 
     const [category, setCategory] = useState('');
+    const [type, setType] = useState('');
 
     const dispatch = useDispatch();
 
@@ -35,6 +37,7 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
             ]);
             setEventToEdit(eventToEdit);
             setCategory(eventToEdit.category.title);
+            setType(eventToEdit.type)
         }
     }, [eventToEdit]);
 
@@ -47,7 +50,7 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
     }
 
     const changeEditType = (e) => {
-        setEventToEdit({ ...eventEdit, type: e.target.value });
+        setType(e.target.value);
     }
 
     const changeEditTitle = (e) => {
@@ -63,14 +66,16 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
 
         const monthStart = valueDate[0].month() + 1 < 10 ? 0 + String(valueDate[0].month() + 1) : valueDate[0].month() + 1;
         const monthFinish = valueDate[1].month() + 1 < 10 ? 0 + String(valueDate[1].month() + 1) : valueDate[1].month() + 1;
-        const start = `${valueDate[0].date()}-${monthStart}-${valueDate[0].year()}`;
-        const finish = `${valueDate[1].date()}-${monthFinish}-${valueDate[1].year()}`;
+        const dayStart = valueDate[0].date() < 10 ? 0 + String(valueDate[0].date()) : valueDate[0].date();
+        const dayFinish = valueDate[1].date() < 10 ? 0 + String(valueDate[1].date()) : valueDate[1].date();
+        const start = `${dayStart}-${monthStart}-${valueDate[0].year()}`;
+        const finish = `${dayFinish}-${monthFinish}-${valueDate[1].year()}`;
 
         const obj = {
             event: {
                 id: eventToEdit.id,
-                category: category,
-                type: eventEdit.type,
+                category,
+                type,
                 title: eventEdit.title,
                 description: eventEdit.description,
                 start,
@@ -79,6 +84,7 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
             token,
         }
         dispatch(editEvent(obj));
+        dispatch(fetchOrgEvents(token));
         handleCloseEdit();
     }
     const handleDateEvent = (e) => {
@@ -108,7 +114,7 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
                         fullWidth
                         label="Название"
                         multiline
-                        rows={1}
+                        rows={2}
                         defaultValue={eventEdit?.title || ''}
                         variant="filled"
                         required
@@ -132,13 +138,14 @@ function EditEvent({ open, handleCloseEdit, eventToEdit, token }) {
                     <InputLabel id="changeType">Тип</InputLabel>
                     <Select
                         labelId="changeType"
-                        value={eventEdit?.type || ''}
+                        value={type}
+                        defaultValue={type}
                         onChange={changeEditType}
                         label="Тип"
                         required
                     >
-                        <MenuItem value={'закрытая'}>Открытое</MenuItem>
-                        <MenuItem value={'открытая'}>Закрытое</MenuItem>
+                        <MenuItem value={'открытая'}>Открытое</MenuItem>
+                        <MenuItem value={'закрытая'}>Закрытое</MenuItem>
                     </Select>
                 </FormControl>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>

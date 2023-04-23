@@ -46,8 +46,10 @@ function CreateEvent({ open, handleClose, token }) {
         e.preventDefault();
         const monthStart = valueDateNewEvent[0].month() + 1 < 10 ? 0 + String(valueDateNewEvent[0].month() + 1) : valueDateNewEvent[0].month() + 1;
         const monthFinish = valueDateNewEvent[1].month() + 1 < 10 ? 0 + String(valueDateNewEvent[1].month() + 1) : valueDateNewEvent[1].month() + 1;
-        const start = `${valueDateNewEvent[0].date()}-${monthStart}-${valueDateNewEvent[0].year()}`;
-        const finish = `${valueDateNewEvent[1].date()}-${monthFinish}-${valueDateNewEvent[1].year()}`;
+        const dayStart = valueDateNewEvent[0].date() < 10 ? 0 + String(valueDateNewEvent[0].date()) : valueDateNewEvent[0].date();
+        const dayFinish = valueDateNewEvent[1].date() < 10 ? 0 + String(valueDateNewEvent[1].date()) : valueDateNewEvent[1].date();
+        const start = `${dayStart}-${monthStart}-${valueDateNewEvent[0].year()}`;
+        const finish = `${dayFinish}-${monthFinish}-${valueDateNewEvent[1].year()}`;
         
         const obj = {
             event: {
@@ -90,7 +92,7 @@ function CreateEvent({ open, handleClose, token }) {
                         fullWidth
                         label="Название"
                         multiline
-                        rows={1}
+                        rows={2}
                         defaultValue={newEvent?.title || ''}
                         variant="filled"
                         required

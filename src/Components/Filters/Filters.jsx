@@ -20,7 +20,6 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { ROWS } from '../../consts/main';
 import cl from './Filters.module.css';
 import "dayjs/locale/ru";
 
@@ -30,7 +29,7 @@ function Filters({ closeModal }) {
     const dispatch = useDispatch();
     const filters = useSelector((state) => state.filterForm);
 
-    const categoriesUniq = Array.from(new Set(ROWS.map(el => el.cat)));
+    const categoriesUniq = ['Форум', 'Конференция', 'Олимпиада', 'Конкурс']
 
     const onDateChange = (newValue) => {
         dispatch(setFilterDate(new Date(newValue.toString()).getTime()));

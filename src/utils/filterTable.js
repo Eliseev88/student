@@ -31,7 +31,7 @@ export function filterTable(filter, setRows, ROWS) {
     if (filter.rate && filter.type) {
         setRows(ROWS.filter(el => {
             const eventFinish = convertStringToDate(el.finish);
-            return el.type === filter.cat && el.type === filter.type && date.getTime() <= eventFinish.getTime();
+            return el.rate === filter.rate && el.type === filter.type && date.getTime() <= eventFinish.getTime();
         }));
         return;
     }

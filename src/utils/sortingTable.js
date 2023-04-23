@@ -27,12 +27,13 @@ export function stableSort(array, comparator) {
 }
 
 export function sortRowsByDate(arr, date, direction) {
-    arr.sort(function (a, b) {
-        const partsA = a[date].split('.');
-        const partsB = b[date].split('.');
+    const arrayForSort = [...arr]
+    arrayForSort.sort(function (a, b) {
+        const partsA = a[date].split('-');
+        const partsB = b[date].split('-');
         const dateA = new Date(partsA[2], partsA[1] - 1, partsA[0]);
         const dateB = new Date(partsB[2], partsB[1] - 1, partsB[0]);
         return dateA - dateB;
     });
-    return direction === 'asc' ? arr : arr.reverse();
+    return direction === 'asc' ? arrayForSort : arrayForSort.reverse();
 }

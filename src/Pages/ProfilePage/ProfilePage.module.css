@@ -1,3 +1,9 @@
-.removeItem {
-    
+.accordion {
+    margin-bottom: 20px;
+    width: 350px;
+}
+
+.details {
+    max-height: 300px;
+    overflow-y: auto;
 }

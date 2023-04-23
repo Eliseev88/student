@@ -18,7 +18,8 @@ function EventPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { event, isLoading } = useSelector(state => state.events);
-    const [allertText, setAllertText] = useState('Вы не можете записаться на это мероприятие!');
+    const [alreadyWriten, setAlreadyWriten] = useState(false);
+    const [noRightToWrite, setNoRightToWrite] = useState(false);
     const user = useSelector(state => state.auth.user);
     const userEvents = useSelector(state => state.userEvents.userEvents);
 
@@ -32,32 +33,35 @@ function EventPage() {
     }, [dispatch, id]);
 
     useEffect(() => {
-        if (!userEvents.length && user) {
+        if (user) {
             dispatch(getUserEvents(user.token));
         }
-    }, [userEvents, user]);
+    }, [user, dispatch]);
 
     useEffect(() => {
         if (!user) {
             setIsDisabled(true);
+            setNoRightToWrite(false);
+            setAlreadyWriten(false);
+        } else if (event?.type === 'закрытая' && user?.user?.role === 'guest') {
+            setIsDisabled(true);
+            setNoRightToWrite(true);
+            setAlreadyWriten(false);
+        } else if (userEvents?.length && userEvents?.find(el => el?.id === event?.id)) {
+            setIsDisabled(true);
+            setNoRightToWrite(false);
+            setAlreadyWriten(true);
         } else {
             setIsDisabled(false);
+            setNoRightToWrite(false);
+            setAlreadyWriten(false);
         }
-        if (event && user) {
-            if (event.type === 'закрытая' && user.user.role === 'guest') {
-                setIsDisabled(true);
-            }
-            if (userEvents.find(el => el.id === event.id)) {
-                setIsDisabled(true);
-                setAllertText('Вы уже записаны на это мероприятие');
-            }
-        }
-    }, [event, user, userEvents])
+    }, [user, event, userEvents]);
 
     const onBook = () => {
         setText('Вы записались на мероприятие');
         setOpen(true);
-        dispatch(signed({id: event.id, token: user?.token}));
+        dispatch(signed({ id: event.id, token: user?.token }));
     }
 
     const onEstimate = (e, newValue) => {
@@ -99,13 +103,18 @@ function EventPage() {
                     <Typography variant="overline" display="block" gutterBottom align={'center'}>
                         Контакты: <span className={cl.details}>{event?.users?.email}</span>
                     </Typography>
-                    {isDisabled && <Alert
+                    {noRightToWrite && <Alert
                         sx={{ width: '100%', marginBottom: '5px', display: 'flex', justifyContent: 'center' }}
                         severity="warning"
                     >
-                        {allertText}
+                        Вы не можете записаться на это мероприятие
                     </Alert>
                     }
+                    {alreadyWriten && <Alert severity="success"
+                        sx={{ width: '100%', marginBottom: '5px', display: 'flex', justifyContent: 'center' }}
+                    >
+                        Вы уже записаны на это мероприятие
+                    </Alert>}
                     <Button
                         variant="contained"
                         className={cl.btn}

@@ -14,4 +14,17 @@ export const fetchOrgEvents = createAsyncThunk(
             return thunkApi.rejectWithValue('Error');
         }
     }
-)
+);
+
+export const getEventUsers = createAsyncThunk(
+    'orgEvents/getEventUsers',
+    async (id, thunkApi) => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/event_users/' + id);
+            return response.data;
+        } catch (e) {
+            return thunkApi.rejectWithValue('Error');
+        }
+    }
+);
+

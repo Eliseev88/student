@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUsers } from './actionsCreator';
+import { fetchUsers, updateRole } from './actionsCreator';
 
 const initialState = {
     users: [],
@@ -23,6 +23,16 @@ export const usersSlice = createSlice({
         [fetchUsers.rejected.type]: (state, action) => {
             state.isLoading = false;
             state.error = action.payload
+        },
+        [updateRole.fulfilled.type]: (state, action) => {
+            state.isLoading = false;
+            state.error = '';
+            state.users = state.users.map(el => {
+                if (el.id === action.payload.id) {
+                    return action.payload;
+                }
+                return el;
+            });
         },
     }
 });

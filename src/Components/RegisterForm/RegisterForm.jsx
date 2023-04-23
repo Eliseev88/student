@@ -91,7 +91,6 @@ function RegisterForm() {
                             size='small'
                             required
                             value={password}
-                            onFocus={() => setPassError(false)}
                             onChange={handlePassChange}
                         />
                         <TextField
@@ -101,7 +100,6 @@ function RegisterForm() {
                             size='small'
                             required
                             value={repeatPassword}
-                            onFocus={() => setPassError(false)}
                             onChange={handlePassRepeatChange}
                         />
                     </div>

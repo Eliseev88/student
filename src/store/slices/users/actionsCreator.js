@@ -11,4 +11,15 @@ export const fetchUsers = createAsyncThunk(
             return thunkApi.rejectWithValue('Error');
         }
     }
-)
+);
+export const updateRole = createAsyncThunk(
+    'users/updateRole',
+    async (user, thunkApi) => {
+        try {
+            const response = await axios.put('http://localhost:8000/api/user/' + user.id, {role: user.role});
+            return response.data;
+        } catch (e) {
+            return thunkApi.rejectWithValue('Error');
+        }
+    }
+);

@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchOrgEvents } from './actionsCreator';
+import { fetchOrgEvents, getEventUsers } from './actionsCreator';
 
 const initialState = {
     events: [],
     event: null,
+    eventUsers: [],
     isLoading: false,
     error: '',
 }
@@ -24,6 +25,11 @@ export const orgEventsSlice = createSlice({
         [fetchOrgEvents.rejected.type]: (state, action) => {
             state.isLoading = false;
             state.error = action.payload
+        },
+        [getEventUsers.fulfilled.type]: (state, action) => {
+            state.isLoading = false;
+            state.error = '';
+            state.eventUsers = action.payload;
         },
     }
 });

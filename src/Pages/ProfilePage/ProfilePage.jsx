@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"
@@ -10,6 +10,9 @@ import CreateEvent from "../../Components/CreateEvent/CreateEvent";
 import { fetchOrgEvents } from "../../store/slices/orgEvents/actionsCreator";
 import { deleteEvent } from "../../store/slices/event/actionCreator";
 import { getUserEvents, unsigned } from "../../store/slices/userEvents/actionsCreator";
+import Admin from "../../Components/Admin/Admin";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import cl from './ProfilePage.module.css';
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -74,8 +77,8 @@ function ProfilePage() {
   }
 
   const handleEdit = (e) => {
-    const event = orgEvents.find(el => el.id === +e.currentTarget.id);
-    setEventToEdit(event);
+    const event = orgEvents.find(el => el.event.id === +e.currentTarget.id);
+    setEventToEdit(event.event);
     setOpenModalEdit(true);
   }
 
@@ -92,7 +95,7 @@ function ProfilePage() {
 
   return (
     <Box ml={2} mt={2} mb={2}>
-      {user?.user?.role === 'admin' ? 'sfsdf'
+      {user?.user?.role === 'admin' ? <Admin />
         : <>
           <Typography variant="h4" gutterBottom>
             Мои записи на мероприятия
@@ -122,7 +125,7 @@ function ProfilePage() {
           }
           {user?.user?.role === 'organizer' &&
             <>
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" mt={2}>
                 Мои мероприятия
               </Typography>
               {isOrgEventsLoading ? <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -131,19 +134,42 @@ function ProfilePage() {
                 : !orgEvents.length
                   ? <Typography>Мероприятий нет</Typography>
                   : <List>
-                    {orgEvents.map(event => {
+                    {orgEvents.map(el => {
                       return (
-                        <ListItem disablePadding key={event.id}>
-                          <ListItemButton component="a" href={`/events/${event.id}`}>
-                            <ListItemText primary={event.title} />
-                          </ListItemButton>
-                          <Button title='Редактировать мероприятие' color="success" id={event.id} onClick={handleEdit}>
-                            <EditIcon />
-                          </Button>
-                          <Button title='Отменить мероприятие' color="error" id={event.id} onClick={handleDelete}>
-                            <CancelIcon />
-                          </Button>
-                        </ListItem>
+                        <div key={el.event.id}>
+                          <ListItem disablePadding>
+                            <ListItemButton component="a" href={`/events/${el.event.id}`}>
+                              <ListItemText primary={el.event.title} />
+                            </ListItemButton>
+                            <Button title='Редактировать мероприятие' color="success" id={el.event.id} onClick={handleEdit}>
+                              <EditIcon />
+                            </Button>
+                            <Button title='Отменить мероприятие' color="error" id={el.event.id} onClick={handleDelete}>
+                              <CancelIcon />
+                            </Button>
+                          </ListItem>
+                          <div className={cl.accordion}>
+                            <Accordion id={el.event.id}>
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                              >
+                                <Typography>Участники</Typography>
+                              </AccordionSummary>
+                              <AccordionDetails>
+                                <div className={cl.details}>
+                                  {!el.eventUsers.length && 'Участников нет'}
+                                  {el.eventUsers.map(user => {
+                                    return (
+                                      <ListItem component="div" disablePadding key={user.id}>
+                                        <ListItemText primary={user.name} secondary={user.email} />
+                                      </ListItem>
+                                    )
+                                  })}
+                                </div>
+                              </AccordionDetails>
+                            </Accordion>
+                          </div>
+                        </div>
                       )
                     })}
                   </List>

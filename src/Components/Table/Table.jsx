@@ -14,12 +14,13 @@ import Rating from '@mui/material/Rating';
 import { EnhancedTableToolbar } from './TableToolbar';
 import cl from './Table.module.css';
 import { EnhancedTableHead } from './TableHead';
-import { stableSort, getComparator } from '../../utils/sortingTable';
+import { stableSort, getComparator, sortRowsByDate } from '../../utils/sortingTable';
 import { useNavigate } from "react-router-dom";
 import Filters from '../Filters/Filters';
 import TransitionsModal from '../Modal/Modal';
 import { filterTable } from '../../utils/filterTable';
 import { fetchEvents } from '../../store/slices/event/actionCreator';
+import { CircularProgress } from '@mui/material';
 
 const DEFAULT_ORDER = 'desc';
 const DEFAULT_ORDER_BY = 'id';
@@ -47,10 +48,10 @@ export default function EnhancedTable() {
     const { data: search } = useSelector(state => state.search);
 
     const dispatch = useDispatch();
-    const {events, isLoading, error} = useSelector(state => state.events);
+    const { events, isLoading, error } = useSelector(state => state.events);
 
-    useEffect(() =>  {
-      dispatch(fetchEvents())
+    useEffect(() => {
+        dispatch(fetchEvents())
     }, [dispatch]);
 
     useEffect(() => {
@@ -88,27 +89,27 @@ export default function EnhancedTable() {
             setOrder(toggledOrder);
             setOrderBy(newOrderBy);
 
-            // if (event.target.id === 'Дата начала') {
-            //     const sortedRows = sortRowsByDate(rows, 'start', order);
-            //     const updatedRows = sortedRows.slice(
-            //         page * rowsPerPage,
-            //         page * rowsPerPage + rowsPerPage,
-            //     );
+            if (event.target.id === 'Дата начала') {
+                const sortedRows = sortRowsByDate(rows, 'start', order);
+                const updatedRows = sortedRows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage,
+                );
 
-            //     setVisibleRows(updatedRows);
-            //     return;
-            // }
+                setVisibleRows(updatedRows);
+                return;
+            }
 
-            // if (event.target.id === 'Дата окончания') {
-            //     const sortedRows = sortRowsByDate(rows, 'finish', order);
-            //     const updatedRows = sortedRows.slice(
-            //         page * rowsPerPage,
-            //         page * rowsPerPage + rowsPerPage,
-            //     );
+            if (event.target.id === 'Дата окончания') {
+                const sortedRows = sortRowsByDate(rows, 'finish', order);
+                const updatedRows = sortedRows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage,
+                );
 
-            //     setVisibleRows(updatedRows);
-            //     return;
-            // }
+                setVisibleRows(updatedRows);
+                return;
+            }
 
             const sortedRows = stableSort(rows, getComparator(toggledOrder, newOrderBy));
             const updatedRows = sortedRows.slice(
@@ -222,7 +223,7 @@ export default function EnhancedTable() {
                                     );
                                 })
                                 : null}
-                            {!rows.length && <TableRow><TableCell colSpan={6}>Мероприятий не найдено</TableCell></TableRow>}
+                            {!rows.length && !isLoading && <TableRow><TableCell colSpan={6}>Мероприятий не найдено</TableCell></TableRow>}
                             {paddingHeight > 0 && (
                                 <TableRow
                                     style={{
@@ -234,6 +235,9 @@ export default function EnhancedTable() {
                             )}
                         </TableBody>
                     </Table>
+                    {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                        <CircularProgress />
+                    </Box>}
                 </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
