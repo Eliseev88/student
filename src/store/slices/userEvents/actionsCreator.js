@@ -8,7 +8,7 @@ export const getUserEvents = createAsyncThunk(
             headers: { Authorization: `Bearer ${token}` }
         };
         try {
-            const response = await axios.get('http://localhost:8000/api/user_events', config);
+            const response = await axios.get('http://diplom.fun/api/user_events', config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -23,7 +23,7 @@ export const unsigned = createAsyncThunk(
             headers: { Authorization: `Bearer ${obj.token}` }
         };
         try {
-            const response = await axios.delete('http://localhost:8000/api/user_events/' + obj.id, config);
+            const response = await axios.delete('http://diplom.fun/api/user_events/' + obj.id, config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -38,7 +38,7 @@ export const signed = createAsyncThunk(
             headers: { Authorization: `Bearer ${obj.token}` }
         };
         try {
-            const response = await axios.post('http://localhost:8000/api/user_events/' + obj.id, {}, config);
+            const response = await axios.post('http://diplom.fun/api/user_events/' + obj.id, {}, config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');

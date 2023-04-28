@@ -5,7 +5,7 @@ export const fetchEvents = createAsyncThunk(
     'event/fetchAll',
     async (_, thunkApi) => {
         try {
-            const response = await axios.get('http://localhost:8000/api/events');
+            const response = await axios.get('http://diplom.fun/api/events');
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -17,7 +17,7 @@ export const getEventById = createAsyncThunk(
     'event/eventById',
     async (id, thunkApi) => {
         try {
-            const response = await axios.get('http://localhost:8000/api/event/' + id);
+            const response = await axios.get('http://diplom.fun/api/event/' + id);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -32,7 +32,7 @@ export const createEvent = createAsyncThunk(
             headers: { Authorization: `Bearer ${obj.token}` }
         };
         try {
-            const response = await axios.post('http://localhost:8000/api/event', obj.event, config);
+            const response = await axios.post('http://diplom.fun/api/event', obj.event, config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -47,7 +47,7 @@ export const editEvent = createAsyncThunk(
             headers: { Authorization: `Bearer ${obj.token}` }
         };
         try {
-            const response = await axios.put('http://localhost:8000/api/event/' + obj.event.id, obj.event, config);
+            const response = await axios.put('http://diplom.fun/api/event/' + obj.event.id, obj.event, config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
@@ -62,7 +62,7 @@ export const deleteEvent = createAsyncThunk(
             headers: { Authorization: `Bearer ${obj.token}` }
         };
         try {
-            const response = await axios.delete('http://localhost:8000/api/event/' + obj.id, config);
+            const response = await axios.delete('http://diplom.fun/api/event/' + obj.id, config);
             return response.data;
         } catch (e) {
             return thunkApi.rejectWithValue('Error');
