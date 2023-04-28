@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from "react-redux"
 import { fetchUsers, updateRole } from "../../store/slices/users/actionsCreator";
-import { FormControl, MenuItem, Select, Typography } from "@mui/material";
+import { Button, FormControl, MenuItem, Select, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ruRU as coreRuRU, } from '@mui/material/locale';
+import cl from './Admin.module.css';
+import TransitionsModal from "../Modal/Modal";
+import CreateNewUser from "./CreateNewUser";
+import { usersSlice } from "../../store/slices/users/usersSlice";
 
 function SelectRole(props) {
     const dispatch = useDispatch();
@@ -12,7 +16,7 @@ function SelectRole(props) {
 
     const handleChange = (e) => {
         setValue(e.target.value);
-        dispatch(updateRole({id: props.row.userId, role: e.target.value}));
+        dispatch(updateRole({ id: props.row.userId, role: e.target.value }));
     }
     return (
         <strong>
@@ -48,6 +52,7 @@ function Admin() {
     const users = useSelector(state => state.users.users);
 
     const [rows, setRows] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         dispatch(fetchUsers());
@@ -59,7 +64,7 @@ function Admin() {
             for (let i = 0; i < users.length; i++) {
                 if (users[i]['role'] === 'admin') continue;
                 obj.push({
-                    id: i,
+                    id: i + 1,
                     name: users[i]['name'],
                     email: users[i]['email'],
                     role: users[i]['role'],
@@ -86,11 +91,24 @@ function Admin() {
         return `${from}–${to} из ${count !== -1 ? count : `больше чем ${to}`}`;
     }
 
+    const handleModalOpen = () => {
+        setIsOpen(!isOpen);
+        dispatch(usersSlice.actions.setUser(null));
+    }
+
     return (
         <div style={{ height: 'calc(100vh - 152px)', width: '100%', marginBottom: '10px' }}>
             <Typography variant="h4" gutterBottom>
                 Список пользователей
             </Typography>
+            <Button
+                variant="contained"
+                size="small"
+                className={cl.createBtn}
+                onClick={handleModalOpen}
+            >
+                Создать пользователя
+            </Button>
             <ThemeProvider theme={theme}>
                 <DataGrid
                     rows={rows}
@@ -100,6 +118,9 @@ function Admin() {
                     labelDisplayedRows={defaultLabelDisplayedRows}
                 />
             </ThemeProvider>
+            <TransitionsModal open={isOpen} handleClose={handleModalOpen}>
+                <CreateNewUser />
+            </TransitionsModal>
         </div>
     );
 }

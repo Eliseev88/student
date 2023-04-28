@@ -23,3 +23,14 @@ export const updateRole = createAsyncThunk(
         }
     }
 );
+export const createUser = createAsyncThunk(
+    'users/createUser',
+    async (user, thunkApi) => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/user/store/', user);
+            return response.data;
+        } catch (e) {
+            return thunkApi.rejectWithValue('Error');
+        }
+    }
+);

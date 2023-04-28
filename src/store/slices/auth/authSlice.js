@@ -3,6 +3,7 @@ import { login, logout, registerUser, getUserByToken } from './actionCreator';
 
 const initialState = {
   user: null,
+  register: false,
   isLoading: false,
   error: '',
 };
@@ -10,7 +11,11 @@ const initialState = {
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    setRegister: (state, action) => {
+      state.register = action.payload;
+    }
+  },
   extraReducers: {
     [registerUser.fulfilled.type]: (state, action) => {
       state.isLoading = false;

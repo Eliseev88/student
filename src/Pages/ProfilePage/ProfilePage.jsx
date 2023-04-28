@@ -13,6 +13,8 @@ import { getUserEvents, unsigned } from "../../store/slices/userEvents/actionsCr
 import Admin from "../../Components/Admin/Admin";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import cl from './ProfilePage.module.css';
+import TransitionsModal from "../../Components/Modal/Modal";
+import { authSlice } from "../../store/slices/auth/authSlice";
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ function ProfilePage() {
   const dispatch = useDispatch();
 
   const userEvents = useSelector(state => state.userEvents.userEvents);
+  const isRegister = useSelector(state => state.auth.register);
   const isUserEventsLoading = useSelector(state => state.userEvents.isLoading);
   const [deleted, setDeleted] = useState(false);
 
@@ -54,6 +57,10 @@ function ProfilePage() {
       setDeleted(false);
     }
   }, [deleted, dispatch]);
+
+  const handleCloseReg = () => {
+    dispatch(authSlice.actions.setRegister(false));
+  }
 
   const handleCancel = (e) => {
     const confirmDelete = window.confirm('Отписаться от мероприятия?');
@@ -181,6 +188,9 @@ function ProfilePage() {
           }
         </>
       }
+      <TransitionsModal open={isRegister} handleClose={handleCloseReg} >
+        <Typography variant="h5" component="h2">Вы успешно зарегистрировались!</Typography>
+      </TransitionsModal>
     </Box>
   )
 }

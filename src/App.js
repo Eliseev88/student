@@ -6,6 +6,7 @@ import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import { store } from './store/store';
 import { Provider } from 'react-redux';
 import ProfilePage from './Pages/ProfilePage/ProfilePage';
+import { PrivateRoute } from './Components/PrivateRoute/PrivateRoute';
 
 function App() {
   return (
@@ -15,8 +16,12 @@ function App() {
           <Header />
           <Routes>
             <Route path='/' element={<MainPage />} />
-            <Route path='/login' element={<MainPage />} />
-            <Route path='/register' element={<MainPage />} />
+            <Route path="/login" element={<PrivateRoute />}>
+              <Route path="" element={<MainPage />} />
+            </Route>
+            <Route path="/register" element={<PrivateRoute />}>
+              <Route path='' element={<MainPage />} />
+            </Route>
             <Route path='/events'>
               <Route path=':id' element={<EventPage />} />
             </Route>

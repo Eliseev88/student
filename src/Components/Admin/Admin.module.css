@@ -1,0 +1,21 @@
+.createBtn {
+    margin-bottom: 10px !important;
+}
+
+.box {
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 50%;
+}
+
+.switch {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.link {
+    text-decoration: none;
+}

@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUsers, updateRole } from './actionsCreator';
+import { createUser, fetchUsers, updateRole } from './actionsCreator';
 
 const initialState = {
     users: [],
+    user: null,
     isLoading: false,
     error: '',
 }
@@ -10,7 +11,14 @@ const initialState = {
 export const usersSlice = createSlice({
     name: 'users',
     initialState,
-    reducers: {},
+    reducers: {
+        addUser: (state, action) => {
+            state.users = state.users = [...state.users, action.payload];
+        },
+        setUser: (state) => {
+            state.user = null;
+        }
+    },
     extraReducers: {
         [fetchUsers.fulfilled.type]: (state, action) => {
             state.isLoading = false;
@@ -33,6 +41,18 @@ export const usersSlice = createSlice({
                 }
                 return el;
             });
+        },
+        [createUser.fulfilled.type]: (state, action) => {
+            state.isLoading = false;
+            state.error = '';
+            state.user = action.payload;
+        },
+        [createUser.pending.type]: (state) => {
+            state.isLoading = true;
+        },
+        [createUser.rejected.type]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload
         },
     }
 });
