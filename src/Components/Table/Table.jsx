@@ -48,7 +48,7 @@ export default function EnhancedTable() {
     const { data: search } = useSelector(state => state.search);
 
     const dispatch = useDispatch();
-    const { events, isLoading, error } = useSelector(state => state.events);
+    const { events, isLoading } = useSelector(state => state.events);
 
     useEffect(() => {
         dispatch(fetchEvents())

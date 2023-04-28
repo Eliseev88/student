@@ -37,7 +37,7 @@ function CreateNewUser() {
         if (user) {
             dispatch(usersSlice.actions.addUser(user));
         }
-    }, [user])
+    }, [user, dispatch]);
 
     const handlePassChange = (e) => {
         setPassword(e.target.value);

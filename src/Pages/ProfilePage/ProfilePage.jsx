@@ -49,6 +49,7 @@ function ProfilePage() {
     if (createdEvent) {
       dispatch(fetchOrgEvents(user.token));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdEvent, dispatch]);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ function ProfilePage() {
       dispatch(getUserEvents(user.token));
       setDeleted(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deleted, dispatch]);
 
   const handleCloseReg = () => {
